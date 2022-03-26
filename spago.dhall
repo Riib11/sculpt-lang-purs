@@ -12,7 +12,22 @@ to generate this file without the comments in this block.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console", "effect", "naturals", "prelude", "record", "undefined", "uuid" ]
+  [ "arrays"
+  , "console"
+  , "effect"
+  , "enums"
+  , "foldable-traversable"
+  , "lists"
+  , "maybe"
+  , "naturals"
+  , "nonempty"
+  , "ordered-collections"
+  , "partial"
+  , "prelude"
+  , "record"
+  , "undefined"
+  , "uuid"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
