@@ -12,31 +12,55 @@ import Effect.Unsafe (unsafePerformEffect)
 import Type.Proxy (Proxy(..))
 import Undefined (undefined)
 
-type Universe metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( level :: Level | metaUniverse )
+type Universe meta
+  = ( level :: Level
+    , meta :: meta
+    )
 
-type Pi metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( termName :: TermName, termId :: TermId, type1 :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole, type2 :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole | metaPi )
+type Pi meta
+  = ( termName :: TermName
+    , termId :: TermId
+    , type1 :: Term meta
+    , type2 :: Term meta
+    , meta :: meta
+    )
 
-type Lambda metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( termName :: TermName, termId :: TermId, type :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole, term :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole | metaLambda )
+type Lambda meta
+  = ( termName :: TermName
+    , termId :: TermId
+    , term :: Term meta
+    , meta :: meta
+    )
 
-type Let metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( termName :: TermName, termId :: TermId, term1 :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole, term2 :: Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole | metaLet )
+type Let meta
+  = ( termName :: TermName
+    , termId :: TermId
+    , type_ :: Term meta
+    , term1 :: Term meta
+    , term2 :: Term meta
+    , meta :: meta
+    )
 
-type Hole metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( holeId :: HoleId, weakening :: Set TermId, substitution :: Substitution metaUniverse metaPi metaLambda metaNeutral metaLet metaHole | metaHole )
+type Hole meta
+  = ( holeId :: HoleId
+    , weakening :: Set TermId
+    , substitution :: Substitution meta
+    , meta :: meta
+    )
 
-type Neutral metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = ( termId :: TermId, terms :: List (Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole) | metaNeutral )
+type Neutral meta
+  = ( termId :: TermId
+    , terms :: List (Term meta)
+    , meta :: meta
+    )
 
-data Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = Universe (Record (Universe metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
-  | Pi (Record (Pi metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
-  | Lambda (Record (Lambda metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
-  | Neutral (Record (Neutral metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
-  | Let (Record (Let metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
-  | Hole (Record (Hole metaUniverse metaPi metaLambda metaNeutral metaLet metaHole))
+data Term meta
+  = Universe (Record (Universe meta))
+  | Pi (Record (Pi meta))
+  | Lambda (Record (Lambda meta))
+  | Neutral (Record (Neutral meta))
+  | Let (Record (Let meta))
+  | Hole (Record (Hole meta))
 
 -- TermId
 newtype TermId
@@ -69,8 +93,8 @@ derive newtype instance eqHoleId :: Eq HoleId
 derive newtype instance ordHoleId :: Ord HoleId
 
 -- Substitution
-type Substitution metaUniverse metaPi metaLambda metaNeutral metaLet metaHole
-  = Map TermId (Term metaUniverse metaPi metaLambda metaNeutral metaLet metaHole)
+type Substitution meta
+  = Map TermId (Term meta)
 
 -- Proxies
 _level = Proxy :: Proxy "level"
