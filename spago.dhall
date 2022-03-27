@@ -20,7 +20,6 @@ to generate this file without the comments in this block.
   , "lists"
   , "maybe"
   , "naturals"
-  , "nonempty"
   , "ordered-collections"
   , "partial"
   , "prelude"

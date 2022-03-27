@@ -2,7 +2,6 @@ module Language.Sculpt.Level where
 
 import Data.Natural
 import Prelude
-
 import Data.Enum (class Enum, pred, succ)
 import Data.Maybe (Maybe(..))
 import Partial.Unsafe (unsafeCrashWith)
@@ -13,13 +12,6 @@ data Level
 
 derive instance Eq Level
 derive instance Ord Level
-
-instance Enum Level where 
-  succ (Level n) = Level <$> succ n
-  succ LevelInfinity = Nothing
-  pred (Level n) = Level <$> pred n
-  pred LevelInfinity = Nothing
-
 
 instance Semiring Level where 
   zero = Level zero 
@@ -40,7 +32,7 @@ to = Level <<< intToNat
 
 from :: Level -> Int
 from (Level n) = natToInt n
-from LevelInfinity = unsafeCrashWith "from LevelInfinity"
+from LevelInfinity = unsafeCrashWith "from: LevelInfinity"
 
 meet :: Level -> Level -> Level
 meet = min
