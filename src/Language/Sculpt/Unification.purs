@@ -11,3 +11,6 @@ type HoleSubstitution meta
 
 unify :: forall meta. Term meta -> Term meta -> Maybe (HoleSubstitution meta)
 unify _ _ = undefined
+
+applyHoleSubstitution :: forall meta. HoleSubstitution meta -> Term meta -> Term meta
+applyHoleSubstitution = undefined
