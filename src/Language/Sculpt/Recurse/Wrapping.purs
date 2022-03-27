@@ -23,7 +23,7 @@ _wrap_type2 = Proxy :: Proxy "wrap_term2"
 
 _wrap_parent = Proxy :: Proxy "wrap_parent"
 
--- Wrap
+-- Wrap*
 type Wrap meta a
   = a -> Term meta
 
@@ -32,6 +32,9 @@ type WrapTerm meta
 
 type WrapTerms meta
   = Wrap meta (List (Term meta))
+
+type WrapNeutral meta
+  = Wrap meta (Record (Neutral meta))
 
 -- Rec*
 type RecUniverse meta row
@@ -49,6 +52,7 @@ type RecHole meta row
 type RecNeutral meta row
   = Rec.RecNeutral meta ( wrap_terms :: WrapTerms meta, wrap_parent :: WrapTerm meta | row )
 
+-- ? how to build up wrap of neutral that is applied to all the instances in term2
 type RecLet meta row
   = Rec.RecLet meta ( wrap_type :: WrapTerm meta, wrap_term1 :: WrapTerm meta, wrap_term2 :: WrapTerm meta, wrap_parent :: WrapTerm meta | row )
 
