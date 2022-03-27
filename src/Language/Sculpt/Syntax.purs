@@ -21,43 +21,22 @@ data Syntax
   | SyntaxNeutral
 
 type Universe meta
-  = ( level :: Level
-    , meta :: Maybe meta
-    )
+  = ( level :: Level, meta :: Maybe meta )
 
 type Pi meta
-  = ( binding :: Binding
-    , type1 :: Term meta
-    , type2 :: Term meta
-    , meta :: Maybe meta
-    )
+  = ( binding :: Binding, type1 :: Term meta, type2 :: Term meta, meta :: Maybe meta )
 
 type Lambda meta
-  = ( binding :: Binding
-    , term :: Term meta
-    , meta :: Maybe meta
-    )
+  = ( binding :: Binding, term :: Term meta, meta :: Maybe meta )
 
 type Let meta
-  = ( binding :: Binding
-    , type_ :: Term meta
-    , term1 :: Term meta
-    , term2 :: Term meta
-    , meta :: Maybe meta
-    )
+  = ( binding :: Binding, type_ :: Term meta, term1 :: Term meta, term2 :: Term meta, meta :: Maybe meta )
 
 type Hole meta
-  = ( holeId :: HoleId
-    , weakening :: Set Id
-    , substitution :: Substitution meta
-    , meta :: Maybe meta
-    )
+  = ( holeId :: HoleId, weakening :: Set Id, substitution :: Substitution meta, meta :: Maybe meta )
 
 type Neutral meta
-  = ( id :: Id
-    , terms :: List (Term meta)
-    , meta :: Maybe meta
-    )
+  = ( id :: Id, terms :: List (Term meta), meta :: Maybe meta )
 
 data Term meta
   = Universe (Record (Universe meta))
