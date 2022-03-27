@@ -1,12 +1,16 @@
 module Language.Sculpt.Syntax where
 
+import Data.Default
 import Data.Natural
 import Language.Sculpt.Level
 import Prelude
 import Data.List (List)
 import Data.Map (Map)
-import Data.Maybe (Maybe)
+import Data.Map as Map
+import Data.Maybe (Maybe(..))
 import Data.Set (Set)
+import Data.Set as Set
+import Data.Symbol (SProxy(..))
 import Data.UUID (UUID, genUUID)
 import Effect.Unsafe (unsafePerformEffect)
 import Type.Proxy (Proxy(..))
@@ -21,22 +25,22 @@ data Syntax
   | SyntaxNeutral
 
 type Universe meta
-  = ( level :: Level, meta :: Maybe meta )
+  = ( level :: Level, meta :: meta "Universe" )
 
 type Pi meta
-  = ( binding :: Binding, type1 :: Term meta, type2 :: Term meta, meta :: Maybe meta )
+  = ( binding :: Binding, type1 :: Term meta, type2 :: Term meta, meta :: meta "Pi" )
 
 type Lambda meta
-  = ( binding :: Binding, term :: Term meta, meta :: Maybe meta )
+  = ( binding :: Binding, term :: Term meta, meta :: meta "Lambda" )
 
 type Let meta
-  = ( binding :: Binding, type_ :: Term meta, term1 :: Term meta, term2 :: Term meta, meta :: Maybe meta )
+  = ( binding :: Binding, type_ :: Term meta, term1 :: Term meta, term2 :: Term meta, meta :: meta "Let" )
 
 type Hole meta
-  = ( holeId :: HoleId, weakening :: Set Id, substitution :: Substitution meta, meta :: Maybe meta )
+  = ( holeId :: HoleId, weakening :: Set Id, substitution :: Substitution meta, meta :: meta "Hole" )
 
 type Neutral meta
-  = ( id :: Id, terms :: List (Term meta), meta :: Maybe meta )
+  = ( id :: Id, terms :: List (Term meta), meta :: meta "Neutral" )
 
 data Term meta
   = Universe (Record (Universe meta))
@@ -49,6 +53,9 @@ data Term meta
 -- Binding
 type Binding
   = { id :: Id, name :: Name }
+
+freshBinding :: Unit -> Binding
+freshBinding _ = { id: freshId unit, name: IgnoreName }
 
 -- Id
 newtype Id
@@ -79,6 +86,9 @@ freshHoleId _ = unsafePerformEffect do HoleId <$> genUUID
 derive newtype instance eqHoleId :: Eq HoleId
 
 derive newtype instance ordHoleId :: Ord HoleId
+
+freshHole :: forall meta. DefaultS meta => Unit -> Record (Hole meta)
+freshHole _ = { holeId: freshHoleId unit, weakening: Set.empty, substitution: Map.empty, meta: defaultS SProxy }
 
 -- Substitution
 type Substitution meta
