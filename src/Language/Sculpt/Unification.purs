@@ -6,8 +6,8 @@ import Data.Map (Map)
 import Data.Maybe (Maybe(..))
 import Undefined (undefined)
 
-type HoleSubstitution
-  = Map HoleId Term
+type HoleSubstitution meta
+  = Map HoleId (Term meta)
 
-unify :: Term -> Term -> Maybe HoleSubstitution
+unify :: forall meta. Term meta -> Term meta -> Maybe (HoleSubstitution meta)
 unify _ _ = undefined

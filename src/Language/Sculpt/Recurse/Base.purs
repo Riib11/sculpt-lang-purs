@@ -4,65 +4,81 @@ import Language.Sculpt.Syntax
 import Prelude
 import Prim.Row
 import Record
+import Data.List (List(..))
+import Language.Sculpt.Level (Level(..))
+import Type.Proxy (Proxy(..))
 
-type RecUniverse row
-  = ( universe :: Universe | row )
+_universe = Proxy :: Proxy "universe"
 
-type RecPi row
-  = ( pi :: Pi | row )
+_pi = Proxy :: Proxy "pi"
 
-type RecLambda row
-  = ( lambda :: Lambda | row )
+_lambda = Proxy :: Proxy "lambda"
 
-type RecNeutralTerm row
-  = ( neutral :: Neutral | row )
+_hole = Proxy :: Proxy "hole"
 
-type RecTerm row
-  = ( term :: Term | row )
+_let_ = Proxy :: Proxy "let_"
 
-type RecTermFun (row :: Row Type) universe pi lambda neutral term a
+type RecUniverse meta row
+  = ( universe :: Record (Universe meta) | row )
+
+type RecPi meta row
+  = ( pi :: Record (Pi meta) | row )
+
+type RecLambda meta row
+  = ( lambda :: Record (Lambda meta) | row )
+
+type RecHole meta row
+  = ( hole :: Record (Hole meta) | row )
+
+type RecNeutral meta row
+  = ( neutral :: Record (Neutral meta) | row )
+
+type RecLet meta row
+  = ( let_ :: Record (Let meta) | row )
+
+type RecArgumentsNil meta row
+  = ( | row )
+
+type RecArgumentsCons meta row
+  = ( term :: Term meta, terms :: List (Term meta) | row )
+
+type RecTerm meta row
+  = ( term :: Term meta | row )
+
+type RecArguments meta row
+  = ( terms :: List (Term meta) | row )
+
+-- recTerm
+type RecTermFun meta row universe pi lambda neutral let_ hole term a
   = Lacks "term" row =>
-    { universe :: Record (universe row) -> a
-    , pi :: Record (pi row) -> a
-    , lambda :: Record (lambda row) -> a
-    , neutral :: Record (neutral row) -> a
+    { universe :: Record (universe meta row) -> a
+    , pi :: Record (pi meta row) -> a
+    , lambda :: Record (lambda meta row) -> a
+    , neutral :: Record (neutral meta row) -> a
+    , let_ :: Record (let_ meta row) -> a
+    , hole :: Record (hole meta row) -> a
     } ->
-    Record (term row) -> a
+    Record (term meta row) -> a
 
-recTerm :: forall row a. RecTermFun row RecUniverse RecPi RecLambda RecNeutralTerm RecTerm a
+recTerm :: forall meta row a. RecTermFun meta row RecUniverse RecPi RecLambda RecNeutral RecLet RecHole RecTerm a
 recTerm rec arg = case arg.term of
   Universe universe -> rec.universe $ union { universe } $ delete _term arg
   Pi pi -> rec.pi $ union { pi } $ delete _term arg
   Lambda lambda -> rec.lambda $ union { lambda } $ delete _term arg
-  NeutralTerm neutral -> rec.neutral $ union { neutral } $ delete _term arg
+  Neutral neutral -> rec.neutral $ union { neutral } $ delete _term arg
+  Let let_ -> rec.let_ $ union { let_ } $ delete _term arg
+  Hole hole -> rec.hole $ union { hole } $ delete _term arg
 
-type RecHole row
-  = ( hole :: Hole | row )
-
-type RecVariable row
-  = ( variable :: Variable | row )
-
-type RecApplication row
-  = ( application :: Application | row )
-
-type RecLet row
-  = ( let_ :: Let | row )
-
-type RecNeutral row
-  = ( neutral :: Neutral | row )
-
-type RecNeutralFun (row :: Row Type) hole variable application let_ neutral a
-  = Lacks "neutral" row =>
-    { hole :: Record (hole row) -> a
-    , variable :: Record (variable row) -> a
-    , application :: Record (application row) -> a
-    , let_ :: Record (let_ row) -> a
+-- recArguments
+type RecArgumentsFun meta row nil cons arguments a
+  = Lacks "term" row =>
+    Lacks "terms" row =>
+    { nil :: Record (nil meta row) -> a
+    , cons :: Record (cons meta row) -> a
     } ->
-    Record (neutral row) -> a
+    Record (arguments meta row) -> a
 
-recNeutral :: forall row a. RecNeutralFun row RecHole RecVariable RecApplication RecLet RecNeutral a
-recNeutral rec arg = case arg.neutral of
-  Hole hole -> rec.hole $ union { hole } $ delete _neutral arg
-  Variable variable -> rec.variable $ union { variable } $ delete _neutral arg
-  Application application -> rec.application $ union { application } $ delete _neutral arg
-  Let let_ -> rec.let_ $ union { let_ } $ delete _neutral arg
+recArguments :: forall meta row a. RecArgumentsFun meta row RecArgumentsNil RecArgumentsCons RecArguments a
+recArguments rec arg = case arg.terms of
+  Nil -> rec.nil $ delete _terms arg
+  Cons term terms -> rec.cons $ union { term, terms } $ delete _terms arg

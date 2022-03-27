@@ -1,6 +1,7 @@
 module Language.Sculpt.Metadata where
 
 import Prelude
+import Undefined (undefined)
 
 data Metadata
   = Universe {}

@@ -3,27 +3,50 @@ module Language.Sculpt.Level where
 import Data.Natural
 import Prelude
 
-import Data.Enum (class Enum)
+import Data.Enum (class Enum, pred, succ)
+import Data.Maybe (Maybe(..))
+import Partial.Unsafe (unsafeCrashWith)
 
-newtype Level
+data Level
   = Level Natural
+  | LevelInfinity
 
-derive newtype instance Eq Level
-derive newtype instance Ord Level
-derive newtype instance Enum Level
-derive newtype instance Semiring Level
+derive instance Eq Level
+derive instance Ord Level
+
+instance Enum Level where 
+  succ (Level n) = Level <$> succ n
+  succ LevelInfinity = Nothing
+  pred (Level n) = Level <$> pred n
+  pred LevelInfinity = Nothing
+
+
+instance Semiring Level where 
+  zero = Level zero 
+
+  one = Level one
+
+  add (Level m) (Level n) = Level (add m n)
+  add LevelInfinity _ = LevelInfinity
+  add _ LevelInfinity = LevelInfinity
+
+  mul (Level m) (Level n) = Level (mul m n)
+  mul LevelInfinity _ = LevelInfinity
+  mul _ LevelInfinity = LevelInfinity
+
 
 to :: Int -> Level
 to = Level <<< intToNat
 
 from :: Level -> Int
 from (Level n) = natToInt n
+from LevelInfinity = unsafeCrashWith "from LevelInfinity"
 
 meet :: Level -> Level -> Level
-meet (Level m) (Level n) = Level (m `min` n)
+meet = min
 
 join :: Level -> Level -> Level
-join (Level m) (Level n) = Level (m `max` n)
+join = max
 
-infix 6 join as ⨆
 infix 6 meet as ⨅
+infix 6 join as ⊔

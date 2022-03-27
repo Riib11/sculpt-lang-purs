@@ -12,46 +12,51 @@ import Effect.Unsafe (unsafePerformEffect)
 import Type.Proxy (Proxy(..))
 import Undefined (undefined)
 
+data Syntax
+  = SyntaxUniverse
+  | SyntaxPi
+  | SyntaxLambda
+  | SyntaxLet
+  | SyntaxHole
+  | SyntaxNeutral
+
 type Universe meta
   = ( level :: Level
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 type Pi meta
-  = ( termName :: TermName
-    , termId :: TermId
+  = ( binding :: Binding
     , type1 :: Term meta
     , type2 :: Term meta
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 type Lambda meta
-  = ( termName :: TermName
-    , termId :: TermId
+  = ( binding :: Binding
     , term :: Term meta
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 type Let meta
-  = ( termName :: TermName
-    , termId :: TermId
+  = ( binding :: Binding
     , type_ :: Term meta
     , term1 :: Term meta
     , term2 :: Term meta
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 type Hole meta
   = ( holeId :: HoleId
-    , weakening :: Set TermId
+    , weakening :: Set Id
     , substitution :: Substitution meta
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 type Neutral meta
-  = ( termId :: TermId
+  = ( id :: Id
     , terms :: List (Term meta)
-    , meta :: meta
+    , meta :: Maybe meta
     )
 
 data Term meta
@@ -62,24 +67,28 @@ data Term meta
   | Let (Record (Let meta))
   | Hole (Record (Hole meta))
 
--- TermId
-newtype TermId
-  = TermId UUID
+-- Binding
+type Binding
+  = { id :: Id, name :: Name }
 
-derive instance eqTermId :: Eq TermId
+-- Id
+newtype Id
+  = Id UUID
 
-derive instance ordTermId :: Ord TermId
+derive instance eqId :: Eq Id
 
-freshTermId :: Unit -> TermId
-freshTermId _ = unsafePerformEffect do TermId <$> genUUID
+derive instance ordId :: Ord Id
 
-data TermName
-  = TermName String
-  | IgnoreTermName
+freshId :: Unit -> Id
+freshId _ = unsafePerformEffect do Id <$> genUUID
 
-derive instance eqTermName :: Eq TermName
+data Name
+  = Name String
+  | IgnoreName
 
-derive instance ordTermName :: Ord TermName
+derive instance eqName :: Eq Name
+
+derive instance ordName :: Ord Name
 
 -- HoleId
 newtype HoleId
@@ -94,16 +103,16 @@ derive newtype instance ordHoleId :: Ord HoleId
 
 -- Substitution
 type Substitution meta
-  = Map TermId (Term meta)
+  = Map Id (Term meta)
 
 -- Proxies
 _level = Proxy :: Proxy "level"
 
 _meta = Proxy :: Proxy "meta"
 
-_termName = Proxy :: Proxy "termName"
+_name = Proxy :: Proxy "name"
 
-_termId = Proxy :: Proxy "termId"
+_id = Proxy :: Proxy "id"
 
 _type_ = Proxy :: Proxy "type_"
 

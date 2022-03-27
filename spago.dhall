@@ -27,6 +27,7 @@ to generate this file without the comments in this block.
   , "record"
   , "undefined"
   , "uuid"
+  , "variant"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
