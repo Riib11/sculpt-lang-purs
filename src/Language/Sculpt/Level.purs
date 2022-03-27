@@ -18,11 +18,11 @@ instance Semiring Level where
 
   one = Level one
 
-  add (Level m) (Level n) = Level (add m n)
+  add (Level m) (Level n) = Level (m + n)
   add LevelInfinity _ = LevelInfinity
   add _ LevelInfinity = LevelInfinity
 
-  mul (Level m) (Level n) = Level (mul m n)
+  mul (Level m) (Level n) = Level (m * n)
   mul LevelInfinity _ = LevelInfinity
   mul _ LevelInfinity = LevelInfinity
 
