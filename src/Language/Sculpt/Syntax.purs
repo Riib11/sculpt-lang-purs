@@ -16,14 +16,6 @@ import Effect.Unsafe (unsafePerformEffect)
 import Type.Proxy (Proxy(..))
 import Undefined (undefined)
 
-data Syntax
-  = SyntaxUniverse
-  | SyntaxPi
-  | SyntaxLambda
-  | SyntaxLet
-  | SyntaxHole
-  | SyntaxNeutral
-
 type Universe meta
   = ( level :: Level, meta :: meta "Universe" )
 

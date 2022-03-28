@@ -50,5 +50,5 @@ instance defaultSMetadata :: DefaultS Metadata where
     "Neutral" -> Neutral { indented: true } (unsafeCoerce unit)
     _ -> unsafeCrashWith "defaultSMetadata:defaultS: impossible"
 
-test :: Metadata "Universe"
-test = Universe {} (Leibniz identity)
+example :: Metadata "Universe"
+example = Universe {} (Leibniz identity)
